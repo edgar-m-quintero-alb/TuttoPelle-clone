@@ -1,0 +1,252 @@
+jQuery(function($){
+	$('.description-btn').click(function(){
+		if($(this).hasClass('description-displayed')){
+			$(this).parent().find('.piel-description').hide();
+			$(this).find('span').show();
+			$(this).find('i').removeClass('flip');
+			$(this).removeClass('description-displayed');
+		}else{
+			$(this).addClass('description-displayed')
+			$(this).parent().find('.piel-description').show();
+			$(this).find('span').hide();
+			$(this).find('i').addClass('flip');
+		}
+	});
+	fetchCantidadAgrupados();
+});
+
+//Función cuando seleccionan una piel en el modal de categorías-piel (topbox)
+function select_piel( slug ){
+	jQuery(function($){
+		//$('input.variation_id').val(Math.floor(Math.random() * 10)).change();
+		//console.log($('input.variation_id').val())
+		$('#value-to-search select' ).val( slug ).change();
+		$('.background-topbox').fadeOut(500);
+		var selected = $('#value-to-search select').children("option:selected").val();
+		var productid = document.getElementById("productid");
+		var modulos = document.getElementsByClassName("quantity"); 
+		var arrayModulos = [];
+		var arrayModulosDos = [];
+
+		Array.prototype.forEach.call(modulos, function(elinput) {                       
+			var moduloInfo = [elinput.name, elinput.value];	
+			arrayModulos.push(moduloInfo);
+		});
+		
+		$( ".subcatpiel .contpiel" ).each(function( index ) {
+			console.log( index + ": " + $( this ).attr( "id" ) );
+		});
+	});
+}
+
+async function fetchCantidadAgrupados() {
+	var productid = document.getElementById("productid");
+	var modulos = document.getElementsByClassName("quantity"); 
+	var cantidadesextra = false;
+	const arrayModulosDos = [];
+	const response = await fetch('https://tuttopelle.mx/wp-json/cantidad-productos-agrupados/v1/data')
+	.then(response => response.json())
+	.then(data => {
+		for (const product of data) {
+			if(productid && productid.value == product[0]){
+				cantidadesextra = true;
+				Array.prototype.forEach.call(modulos, function(elinput) {
+					if(elinput.name == product[1]){ 
+					  	elinput.value = product[2]; 
+					}
+					//var moduloInfo = [elinput.name, elinput.value];
+					//arrayModulosDos.push(moduloInfo);
+				});						
+			}
+		}
+	})
+	.catch(console.error);
+	if(cantidadesextra == false){
+		Array.prototype.forEach.call(modulos, function(elinput) {
+			//var moduloInfo = [elinput.name, elinput.value];
+			//arrayModulosDos.push(moduloInfo);
+		});	
+	}
+	//console.log(arrayModulosDos);
+	//calculatePrice(arrayModulosDos);
+	return arrayModulosDos;
+};
+
+//Funcion para cuando seleccionan una piel en el modal de categorías-piel (topbox) en una composición / producto agrupado
+function cambioComposicion(){
+	jQuery(function($){
+		var selected = $('#pa_categoria-color').children("option:selected").val();
+		//Leer los modulos que estan seleccionados
+		var modulos = document.getElementsByClassName("quantity");
+		var productid = document.getElementById("productid");
+		var arrayModulos = [];
+		Array.prototype.forEach.call(modulos, function(elinput) {
+			var moduloInfo = [elinput.name, elinput.value];	
+			arrayModulos.push(moduloInfo);
+		});
+
+		//AJAX para recalcular el precio según módulos
+		calculatePrice(arrayModulos);	
+	});
+}
+
+function calculatePrice(array){
+	jQuery(function($){
+		var selected = $('#pa_categoria-color').children("option:selected").val();
+		var productid = document.getElementById("productid");
+
+		//AJAX para recalcular el precio según módulos
+		var data = {
+			action: 'ajaxcomposiciones',
+			selected: selected,
+			modulos : array,
+			productid : productid.value
+		};
+
+		$.post(ajaxurl, data, function(returnedData){
+			$( "#ajaxspace" ).empty();
+			$( "#ajaxspace" ).append(returnedData)
+			if(!$( "#ajaxspace" ).is(":visible")){
+				$( "#ajaxspace" ).slideToggle();
+				$( "#modulos" ).slideToggle();
+			}
+		}).fail(function(){
+			console.log("error");
+		});
+	});	
+}
+
+function calculatePriceByCat(){
+	jQuery(function($){
+		var productid = $('.variations_form.cart').data('product_id');
+		var value = document.getElementsByClassName("value");
+		var modules =[];
+		var values =[];
+
+		$(".value").find('select').each(function() {
+			modules.push("attribute_"+$(this).attr('id'));
+			values.push($(this).val());
+		});
+		var data = {
+			action: 'ajaxvariablecat',
+			modules: modules,
+			values : values,
+			productid : productid
+		};
+
+		$.post(ajaxurl, data, function(returnedData){
+			/*$( "#ajaxspace" ).empty();
+			$( "#ajaxspace" ).append(returnedData);
+			console.log(returnedData);
+			if($( "#ajaxspace" ).is(":visible")){
+
+			}else{
+				$( "#ajaxspace" ).slideToggle();
+				$( "#modulos" ).slideToggle();
+			}*/
+			//$( ".woocommerce-variation-price" ).empty();
+			$( ".woocommerce-variation-price" ).append(returnedData);
+			if (!$( ".woocommerce-variation-price" ).is(":visible")) {
+				$( ".woocommerce-variation-price" ).slideToggle();
+				$( "#modulos" ).slideToggle();
+			}
+		}).fail(function(){
+			console.log("error");
+		});
+	});	
+}
+
+function calculateDesde(){
+	jQuery(function($){
+		var selected = $('#pa_categoria-color').children("option:selected").val();
+		var productid = document.getElementById("productid");
+
+		//AJAX para recalcular el precio según módulos
+		var data = {
+			action: 'ajaxdesde',
+			//selected: selected,
+			//modulos : array,
+			productid : productid.value
+		};
+		//console.log(data);
+		$.post(ajaxurl, data, function(returnedData){
+			$( "#desde-wrapper" ).empty();
+			$( "#desde-wrapper" ).append(returnedData);
+			$( "#desde-wrapper" ).is(":visible") || $( "#desde-wrapper" ).slideToggle();
+		}).fail(function(){
+			console.log("error");
+		});
+	});	
+}
+
+// COMPOSICIONES - MODULOS
+function agregarModulo( moduloid, seleccion ){
+	jQuery(function($){ 
+		var nombreModulo = $( "#"+moduloid+" > h3 " ).text();
+		var variacionname = " ";
+		if( $( "."+moduloid+".pieles_modulo").length ){
+			variacionname = $( "."+moduloid+".pieles_modulo option:selected").text();
+		}else{
+			variacionname = $( "."+moduloid+".atributos_modulo option:selected").text();
+		}
+		variacionname = "<br><span class='atributo_modulo_composicion'>("+variacionname+")</span>";
+		var elappend = nombreModulo + variacionname + ' <input class="quantity" type="number" min="0" value="1" name="'+ seleccion +'" onkeyup="cambioComposicion()"  oninput="cambioComposicion()" onchange="cambioComposicion()"><br><br>';
+		$("#modulos").append( elappend );
+		cambioComposicion();
+		$('.background-topbox').fadeOut(500);
+
+	});
+}
+
+//Boton de Agregar Modulo de producto agrupado / composicion
+function abrirModulos(){
+	jQuery(function($){
+		$('.modulos-topbox').css('visibility','visible').hide().fadeIn(500);
+	});
+}
+
+//Funciones de los select de variacion de modulo
+jQuery(document).ready(function($){
+	$(".pieles_modulo").change(function(){
+		let seleccion = $(this).val();
+		let moduloid = $(this).parent().attr('id');
+		let moduloobj = categoriaspieles_modulo[ moduloid.toString() ];
+		let seleccionobj = moduloobj[ seleccion ];
+		const agregarbtn = "<div class='comprarbtn' onClick='agregarModulo("+ moduloid + ", " + seleccion + ")'>AGREGAR MÓDULO</div>";
+		
+		//Limpiamos los divs
+		$("#"+moduloid+" > .modulo_price ").empty();
+		$("#"+moduloid+" > .comprarbtn ").remove();
+		//Mostramos precio y boton de agregar
+		$("#"+moduloid+" > .modulo_price ").append( seleccionobj.price_html );
+		$( "#"+moduloid ).append( agregarbtn );
+	}); 
+
+	$(".atributos_modulo").change(function(){
+		var seleccion = $( this ).val();
+		var moduloid = $( this ).parent().attr( 'id' );
+		var moduloobj = otros_atributos[ moduloid.toString() ];
+		var seleccionobj = moduloobj[ seleccion ];
+		var agregarbtn = "<div class='comprarbtn' onClick='agregarModulo("+ moduloid + ", " + seleccion + ")'>AGREGAR MÓDULO</div>";
+		
+		$( "#"+moduloid+" > .modulo_price " ).empty();
+		$( "#"+moduloid+" > .comprarbtn " ).remove();
+		$( "#"+moduloid+" > .modulo_price " ).append( seleccionobj[ 1 ] );
+		$( "#"+moduloid ).append( agregarbtn );
+	});
+
+	// Check if element has nodes
+	var precio = $('.woocommerce ul.products li.product .desc .price');
+	if ( precio && precio.childNodes && precio.childNodes.length > 0) { // Or just `if (element.childNodes.length)`
+		console.log(precio.childNodes.length);
+	}
+
+});
+
+/*jQuery(function($){
+   $('.post-template-default.single.single-post .mcb-sidebar.sidebar .widget_search form').attr('id','searchform-sidebar');
+});*/
+
+jQuery( document ).ready(function($) {
+	$('.button-unmute').trigger('click');
+});
