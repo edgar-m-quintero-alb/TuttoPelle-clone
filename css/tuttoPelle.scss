@@ -31,7 +31,7 @@
 
   //max-width: 350px;
   width: 350px;
-  z-index: 20;
+  z-index: 999999999;
 
   bottom: 70px;
   right: 15px;
@@ -443,6 +443,14 @@
       }
     }
   }
+
+  @media (max-width: 768px) {
+    .bsc-header,
+    .bsc-footer {
+        border-radius: 0;
+    }
+  }
+
 }
 
 .bsc-chat-minimized {

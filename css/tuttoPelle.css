@@ -10,7 +10,7 @@
 
 #bsc-chat-container {
   width: 350px;
-  z-index: 20;
+  z-index: 999999999;
   bottom: 70px;
   right: 15px;
   height: 80vh;
@@ -388,6 +388,12 @@
 }
 #bsc-chat-container .bsc-footer #bsc-footer-actions #bsc-send-button:hover {
   background-color: #1e1e1e;
+}
+@media (max-width: 768px) {
+  #bsc-chat-container .bsc-header,
+  #bsc-chat-container .bsc-footer {
+    border-radius: 0;
+  }
 }
 
 .bsc-chat-minimized {
