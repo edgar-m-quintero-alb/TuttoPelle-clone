@@ -219,7 +219,7 @@ li.aws_result_item.aws_search_more a {
 /* === Futura Light: coincide con "Futura Light" de BeTheme === */
 @font-face {
   font-family: 'Futura Light';
-  src: url('https://tuttopelle.mx/wp-content/uploads/2021/03/FuturaStd-Light.woff') format('woff');
+  src: url('../fonts/FuturaStd-Light.woff') format('woff');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -228,14 +228,14 @@ li.aws_result_item.aws_search_more a {
 /* === Futura Book como Futura "normal" (peso 400) === */
 @font-face {
   font-family: 'Futura';
-  src: url('https://tuttopelle.mx/wp-content/uploads/2021/03/Futura-Book.woff') format('woff');
+  src: url('../fonts/Futura-Book.woff') format('woff');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Futura';
-  src: url('https://tuttopelle.mx/wp-content/uploads/2021/03/Futura-Book.woff') format('woff');
+  src: url('../fonts/Futura-Book.woff') format('woff');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -243,7 +243,7 @@ li.aws_result_item.aws_search_more a {
 
 @font-face {
   font-family: 'Futura';
-  src: url('https://tuttopelle.mx/wp-content/uploads/2021/03/Futura-Book.woff') format('woff');
+  src: url('../fonts/Futura-Book.woff') format('woff');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
